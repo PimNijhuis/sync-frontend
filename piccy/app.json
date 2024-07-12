@@ -1,4 +1,8 @@
 {
-  "name": "piccy",
-  "displayName": "piccy"
+  "expo": {
+    "name": "piccy",
+    "slug": "piccy",
+    "version": "1.0.0"
+  },
+  "name": "piccy"
 }
