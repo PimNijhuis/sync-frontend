@@ -6,13 +6,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
 
 const items = [
   { id: "1", name: "Date Picker", color: "#D3EAFB", screen: "DatePicker" },
   { id: "2", name: "Activities", color: "#E3EFF2", screen: "Activities" },
-  { id: "3", name: "Who Pays Who", color: "#ECD7D7", screen: "WhoPaysWho" },
-  { id: "4", name: "Planner", color: "#E8B5B5", screen: "Planner" },
+  //   { id: "3", name: "Who Pays Who", color: "#ECD7D7", screen: "WhoPaysWho" },
+  //   { id: "4", name: "Planner", color: "#E8B5B5", screen: "Planner" },
 ];
 
 const Item = ({ item, onPress }) => (
@@ -24,15 +23,12 @@ const Item = ({ item, onPress }) => (
   </TouchableOpacity>
 );
 
-const BoardDetailScreen = ({ navigation }) => {
+const BoardDetailScreen = ({ route, navigation }) => {
+  const { boardId, boardName } = route.params;
+  console.log(boardId);
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Name Board</Text>
-        <TouchableOpacity>
-          <Icon name="add" size={24} color="#000" />
-        </TouchableOpacity>
-      </View>
+      <View style={styles.header}></View>
       <FlatList
         data={items}
         renderItem={({ item }) => (

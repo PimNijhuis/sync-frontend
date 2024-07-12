@@ -1,4 +1,5 @@
-import React from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import React, { useState } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -7,6 +8,7 @@ import {
   View,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { signIn_API } from "../../services/users/actions.js";
 
 const boards = [
   { id: "1", name: "Board One", color: "#D3EAFB" },
@@ -26,7 +28,19 @@ const BoardItem = ({ board, onPress }) => (
   </TouchableOpacity>
 );
 
-const BoardsScreen = ({ navigation }) => {
+const SignInScreen = ({ navigation }) => {
+  const [boards, setBoards] = useState([]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      signIn_API("Pim").then((res) => {
+        if (res) {
+          setBoards(res);
+        }
+      });
+    }, [])
+  );
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -89,4 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default BoardsScreen;
+export default SignInScreen;

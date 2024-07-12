@@ -2036,6 +2036,15 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
+axios@^1.7.2:
+  version "1.7.2"
+  resolved "https://registry.npmjs.org/axios/-/axios-1.7.2.tgz"
+  integrity sha512-2A8QhOMrbomlDuiLeK9XibIBzuHeRcqqNOHp0Cyp5EoJ1IFDh+XZH3A6BkXtv0K4gFGCI0Y4BM7B1wOEi0Rmgw==
+  dependencies:
+    follow-redirects "^1.15.6"
+    form-data "^4.0.0"
+    proxy-from-env "^1.1.0"
+
 babel-core@^7.0.0-bridge.0:
   version "7.0.0-bridge.0"
   resolved "https://registry.npmjs.org/babel-core/-/babel-core-7.0.0-bridge.0.tgz"
@@ -3293,6 +3302,11 @@ flow-parser@0.*:
   resolved "https://registry.npmjs.org/flow-parser/-/flow-parser-0.239.1.tgz"
   integrity sha512-topOrETNxJ6T2gAnQiWqAlzGPj8uI2wtmNOlDIMNB+qyvGJZ6R++STbUOTAYmvPhOMz2gXnXPH0hOvURYmrBow==
 
+follow-redirects@^1.15.6:
+  version "1.15.6"
+  resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.6.tgz"
+  integrity sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==
+
 fontfaceobserver@^2.1.0:
   version "2.3.0"
   resolved "https://registry.npmjs.org/fontfaceobserver/-/fontfaceobserver-2.3.0.tgz"
@@ -3317,6 +3331,15 @@ form-data@^3.0.1:
   version "3.0.1"
   resolved "https://registry.npmjs.org/form-data/-/form-data-3.0.1.tgz"
   integrity sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==
+  dependencies:
+    asynckit "^0.4.0"
+    combined-stream "^1.0.8"
+    mime-types "^2.1.12"
+
+form-data@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/form-data/-/form-data-4.0.0.tgz"
+  integrity sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==
   dependencies:
     asynckit "^0.4.0"
     combined-stream "^1.0.8"
@@ -5345,6 +5368,11 @@ prop-types@15.5.10:
     fbjs "^0.8.9"
     loose-envify "^1.3.1"
 
+proxy-from-env@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/proxy-from-env/-/proxy-from-env-1.1.0.tgz"
+  integrity sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==
+
 pump@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/pump/-/pump-3.0.0.tgz"
@@ -5437,6 +5465,11 @@ react-is@^18.0.0:
   version "18.3.1"
   resolved "https://registry.npmjs.org/react-is/-/react-is-18.3.1.tgz"
   integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
+
+react-native-calendar-events@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.npmjs.org/react-native-calendar-events/-/react-native-calendar-events-2.2.0.tgz"
+  integrity sha512-tNUbhT6Ief0JM4OQzQAaz1ri0+MCcAoHptBcEXCz2g7q3A05pg62PR2Dio4F9t2fCAD7Y2+QggdY1ycAsF3Tsg==
 
 react-native-calendars@^1.1305.0:
   version "1.1305.0"
