@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Image, TouchableOpacity } from "react-native";
 import HolidayDestinationScreen from "./components/activities/HolidayDestinationScreen";
 import SignInScreen from "./components/authorization/SignInScreen";
 import BoardDetailScreen from "./components/boards/BoardDetailScreen";
@@ -15,15 +15,25 @@ const AppNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
+          name="SignIn"
+          component={SignInScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
           name="Boards"
           options={({ navigation }) => ({
+            headerLeft: null,
+            // gestureEnabled: false, // Disable swipe back gesture
+
             headerRight: () => (
               <TouchableOpacity
                 onPress={() => console.log("Add button pressed")} // Replace with your actual function
-                style={{ marginRight: 10 }}
+                style={{ marginRight: 30 }}
               >
-                <Text>+</Text>
-                {/* <Icon name="add" size={24} color="#000" /> */}
+                <Image
+                  source={require("./images/Plus.png")} // Adjust the path to your image
+                  style={{ width: 10, height: 10 }}
+                />
               </TouchableOpacity>
             ),
           })}
@@ -38,7 +48,10 @@ const AppNavigator = () => {
                 onPress={() => console.log("Add button pressed")} // Replace with your actual function
                 style={{ marginRight: 10 }}
               >
-                <Text>+</Text>
+                <Image
+                  source={require("./images/Plus.png")} // Adjust the path to your image
+                  style={{ width: 10, height: 10 }}
+                />
                 {/* <Icon name="add" size={24} color="#000" /> */}
               </TouchableOpacity>
             ),
@@ -54,7 +67,10 @@ const AppNavigator = () => {
                 onPress={() => console.log("Add button pressed")} // Replace with your actual function
                 style={{ marginRight: 10 }}
               >
-                <Text>+</Text>
+                <Image
+                  source={require("./images/Plus.png")} // Adjust the path to your image
+                  style={{ width: 10, height: 10 }}
+                />
                 {/* <Icon name="add" size={24} color="#000" /> */}
               </TouchableOpacity>
             ),
@@ -69,27 +85,15 @@ const AppNavigator = () => {
                 onPress={() => console.log("Add button pressed")} // Replace with your actual function
                 style={{ marginRight: 10 }}
               >
-                <Text>+</Text>
+                <Image
+                  source={require("./images/Plus.png")} // Adjust the path to your image
+                  style={{ width: 10, height: 10 }}
+                />
                 {/* <Icon name="add" size={24} color="#000" /> */}
               </TouchableOpacity>
             ),
           })}
           component={HolidayDestinationScreen}
-        />
-        <Stack.Screen
-          name="Sign in"
-          options={({ navigation }) => ({
-            headerRight: () => (
-              <TouchableOpacity
-                onPress={() => console.log("Add button pressed")} // Replace with your actual function
-                style={{ marginRight: 10 }}
-              >
-                <Text>+</Text>
-                {/* <Icon name="add" size={24} color="#000" /> */}
-              </TouchableOpacity>
-            ),
-          })}
-          component={SignInScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>

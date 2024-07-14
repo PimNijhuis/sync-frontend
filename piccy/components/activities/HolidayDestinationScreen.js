@@ -1,13 +1,13 @@
 import React from "react";
 import {
   Dimensions,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import Swiper from "react-native-deck-swiper";
-import Icon from "react-native-vector-icons/Ionicons";
 
 const { width, height } = Dimensions.get("window");
 
@@ -21,18 +21,26 @@ const holidayDestinations = [
 const Card = ({ destination }) => (
   <View style={[styles.card, { backgroundColor: destination.color }]}>
     <Text style={styles.cardTitle}>{destination.name}</Text>
+    <View style={styles.cardButtonWrapper}>
+      <TouchableOpacity style={styles.buttonWrapper}>
+        <Image
+          source={require("../../images/Cross.png")} // Adjust the path to your image
+          style={{ width: 30, height: 30 }}
+        />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.buttonWrapper}>
+        <Image
+          source={require("../../images/Heart.png")} // Adjust the path to your image
+          style={{ width: 30, height: 30 }}
+        />
+      </TouchableOpacity>
+    </View>
   </View>
 );
 
 const HolidayDestinationScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Holiday Destination</Text>
-        <TouchableOpacity>
-          <Icon name="add" size={24} color="#000" />
-        </TouchableOpacity>
-      </View>
       <Swiper
         cards={holidayDestinations}
         renderCard={(card) => <Card destination={card} />}
@@ -46,14 +54,14 @@ const HolidayDestinationScreen = ({ navigation }) => {
         backgroundColor={"#f0f0f0"}
         stackSize={3}
       />
-      <View style={styles.actions}>
+      {/* <View style={styles.actions}>
         <TouchableOpacity style={styles.actionButton}>
           <Icon name="close" size={40} color="#000" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton}>
           <Icon name="heart" size={40} color="#000" />
         </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -62,7 +70,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F5F5",
-    paddingTop: 50,
+    //paddingTop: 50,
   },
   header: {
     flexDirection: "row",
@@ -76,12 +84,20 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   card: {
-    flex: 1,
+    // flex: 1,
     borderRadius: 10,
-    justifyContent: "center",
+    justifyContent: "space-evenly",
     alignItems: "center",
     height: height * 0.6,
-    marginTop: 20,
+    //marginTop: 20,
+  },
+  buttonWrapper: {
+    width: 60,
+    height: 60,
+    borderRadius: 100,
+    backgroundColor: "rgba(0, 0, 0, 0.1)", // Black with 50% opacity
+    justifyContent: "center",
+    alignItems: "center",
   },
   cardTitle: {
     fontSize: 24,
@@ -100,6 +116,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#D3EAFB",
     justifyContent: "center",
     alignItems: "center",
+  },
+  cardButtonWrapper: {
+    padding: 40,
+    width: "100%",
+    justifyContent: "space-between",
+    flexDirection: "row",
   },
 });
 

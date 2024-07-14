@@ -1,12 +1,12 @@
 import React from "react";
 import {
   FlatList,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
 
 const boards = [
   { id: "1", name: "Board One", color: "#D3EAFB" },
@@ -22,7 +22,10 @@ const BoardItem = ({ board, onPress }) => (
   >
     <View style={styles.boardColorBox}></View>
     <Text style={styles.boardName}>{board.name}</Text>
-    <Icon name="chevron-forward" size={20} color="#000" />
+    <Image
+      source={require("../../images/ArrowRight.png")} // Adjust the path to your image
+      style={{ width: 10, height: 10 }}
+    />
   </TouchableOpacity>
 );
 
