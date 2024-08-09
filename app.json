@@ -1,8 +1,8 @@
 {
-  "expo": {
-    "name": "piccy",
-    "slug": "piccy",
-    "version": "1.0.0"
-  },
-  "name": "piccy"
+	"expo": {
+		"name": "sync",
+		"slug": "sync",
+		"version": "1.0.0"
+	},
+	"name": "sync"
 }

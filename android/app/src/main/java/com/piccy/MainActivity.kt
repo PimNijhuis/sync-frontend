@@ -1,4 +1,4 @@
-package com.piccy
+package com.sync
 
 import android.os.Build
 import android.os.Bundle

@@ -1,4 +1,4 @@
-rootProject.name = 'piccy'
+rootProject.name = 'sync'
 
 dependencyResolutionManagement {
   versionCatalogs {
