@@ -12,13 +12,14 @@ import { signInAPI } from "../../services/users/actions.js";
 
 const SignInScreen = ({ navigation }) => {
 	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
 
 	const handleSignIn = async () => {
 		try {
-			const res = await signInAPI(username);
+			const res = await signInAPI(username, password);
 			if (res) {
-				// Assuming the API response includes boards
-				navigation.navigate("Boards", { boards: res });
+				// navigation.navigate("Plans");
+				navigation.navigate("DatePicker");
 			} else {
 				Alert.alert(
 					"Sign-In Failed",
@@ -39,6 +40,14 @@ const SignInScreen = ({ navigation }) => {
 				placeholder="Enter your username"
 				value={username}
 				onChangeText={setUsername}
+			/>
+			<TextInput
+				style={styles.input}
+				placeholder="Enter your password"
+				value={password}
+				onChangeText={setPassword}
+				secureTextEntry
+				autoCapitalize="none"
 			/>
 			<TouchableOpacity style={styles.button} onPress={handleSignIn}>
 				<Text style={styles.buttonText}>Sign In</Text>

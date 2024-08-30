@@ -1,0 +1,109 @@
+[
+    {
+        "alarms": [
+            [Object
+            ]
+        ],
+        "allDay": true,
+        "attendees": [],
+        "availability": "free",
+        "calendar": {
+            "allowedAvailabilities": [Array
+            ],
+            "allowsModifications": true,
+            "color": "#CCA6AC",
+            "id": "BEF5838B-0A9F-4F6D-8713-490080D44F32",
+            "source": "Google",
+            "title": "User Behavior Analytics"
+        },
+        "endDate": "2024-08-30T21:59:59.000Z",
+        "id": "F0305C5F-6B19-411A-8A47-9095207FB203",
+        "isDetached": false,
+        "location": "",
+        "notes": "",
+        "occurrenceDate": "2024-08-25T22:00:00.000Z",
+        "recurrence": "",
+        "recurrenceRule": {
+            "endDate": "",
+            "frequency": "",
+            "interval": "",
+            "occurrence": ""
+        },
+        "startDate": "2024-08-25T22:00:00.000Z",
+        "timeZone": "",
+        "title": "Emre swimming & eating tzatziki ",
+        "url": ""
+    },
+    {
+        "alarms": [
+            [Object
+            ]
+        ],
+        "allDay": true,
+        "attendees": [],
+        "availability": "free",
+        "calendar": {
+            "allowedAvailabilities": [Array
+            ],
+            "allowsModifications": true,
+            "color": "#A2845E",
+            "id": "194255C1-40F1-45CF-AF15-EC76593874C8",
+            "source": "iCloud",
+            "title": "Others"
+        },
+        "endDate": "2024-08-30T21:59:59.000Z",
+        "id": "72FCD22A-94C7-44F0-A33C-4C962C0D26DF",
+        "isDetached": false,
+        "location": "",
+        "notes": "",
+        "occurrenceDate": "2024-08-29T22:00:00.000Z",
+        "recurrence": "yearly",
+        "recurrenceRule": {
+            "frequency": "yearly",
+            "interval": 1
+        },
+        "startDate": "2024-08-29T22:00:00.000Z",
+        "timeZone": "",
+        "title": "Verjaardag Danny Nijhuis",
+        "url": ""
+    },
+    {
+        "alarms": [
+            [Object
+            ]
+        ],
+        "allDay": false,
+        "attendees": [],
+        "availability": "busy",
+        "calendar": {
+            "allowedAvailabilities": [Array
+            ],
+            "allowsModifications": true,
+            "color": "#CC73E1",
+            "id": "8CA3B9C3-3330-4BAB-8E00-5072D6C452FF",
+            "source": "iCloud",
+            "title": "ZZP"
+        },
+        "endDate": "2024-08-30T18:00:00.000Z",
+        "id": "3BA86F0D-40AA-4213-9742-807F5F9D8140",
+        "isDetached": false,
+        "location": "B. Amsterdam - B.1 Johan Huizingalaan 763A, 1066 VH Amsterdam, Netherlands",
+        "notes": "",
+        "occurrenceDate": "2024-08-30T11:00:00.000Z",
+        "recurrence": "weekly",
+        "recurrenceRule": {
+            "frequency": "weekly",
+            "interval": 1
+        },
+        "startDate": "2024-08-30T11:00:00.000Z",
+        "structuredLocation": {
+            "coords": [Object
+            ],
+            "radius": 149.859695581862,
+            "title": "B. Amsterdam - B.1"
+        },
+        "timeZone": null,
+        "title": "Bij B",
+        "url": ""
+    }
+]

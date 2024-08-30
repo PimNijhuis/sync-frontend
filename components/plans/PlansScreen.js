@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
 	FlatList,
 	Image,
@@ -7,50 +7,50 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-import { getUserBoardsAPI } from "../../services/users/actions.js";
+// import { getUserPlansAPI } from "../../services/users/actions.js";
 
-const BoardItem = ({ board, onPress }) => (
+const PlanItem = ({ plan, onPress }) => (
 	<TouchableOpacity
-		style={[styles.boardItem, { backgroundColor: board.color }]}
+		style={[styles.planItem, { backgroundColor: plan.color }]}
 		onPress={onPress}
 	>
-		<View style={styles.boardColorBox}></View>
-		<Text style={styles.boardName}>{board.name}</Text>
+		<View style={styles.planColorBox}></View>
+		<Text style={styles.planName}>{plan.name}</Text>
 		<Image source={require("../../images/ArrowRight.png")} />
 	</TouchableOpacity>
 );
 
-const BoardsScreen = ({ navigation }) => {
-	const [boards, setBoards] = useState([]);
+const PlansScreen = ({ navigation }) => {
+	const [plans, setPlans] = useState([]);
 
-	useEffect(() => {
-		getUserBoardsAPI("66912b3b46838e95c3ba6147")
-			.then((boards) => {
-				setBoards(boards);
-			})
-			.catch((error) => {
-				console.log("Error fetching boards:", error);
-			});
-	}, []);
+	// useEffect(() => {
+	// 	getUserPlansAPI("66912b3b46838e95c3ba6147")
+	// 		.then((plans) => {
+	// 			setPlans(plans);
+	// 		})
+	// 		.catch((error) => {
+	// 			console.log("Error fetching plans:", error);
+	// 		});
+	// }, []);
 
 	return (
 		<View style={styles.container}>
 			<FlatList
-				data={boards}
+				data={plans}
 				renderItem={({ item }) => (
-					<BoardItem
+					<PlanItem
 						key={item.id}
-						board={item}
+						plan={item}
 						onPress={() =>
-							navigation.navigate("BoardDetail", {
-								boardId: item.id,
-								boardName: item.name,
+							navigation.navigate("PlanDetail", {
+								planId: item.id,
+								planName: item.name,
 							})
 						}
 					/>
 				)}
 				keyExtractor={(item) => item.id}
-				contentContainerStyle={styles.boardList}
+				contentContainerStyle={styles.planList}
 			/>
 		</View>
 	);
@@ -73,27 +73,27 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		fontWeight: "bold",
 	},
-	boardList: {
+	planList: {
 		paddingHorizontal: 20,
 	},
-	boardItem: {
+	planItem: {
 		flexDirection: "row",
 		alignItems: "center",
 		padding: 15,
 		borderRadius: 10,
 		marginBottom: 10,
 	},
-	boardColorBox: {
+	planColorBox: {
 		width: 40,
 		height: 40,
 		borderRadius: 10,
 		backgroundColor: "#999",
 		marginRight: 10,
 	},
-	boardName: {
+	planName: {
 		flex: 1,
 		fontSize: 16,
 	},
 });
 
-export default BoardsScreen;
+export default PlansScreen;
