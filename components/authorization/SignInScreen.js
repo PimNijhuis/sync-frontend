@@ -19,7 +19,7 @@ const SignInScreen = ({ navigation }) => {
 			const res = await signInAPI(username, password);
 			if (res) {
 				// navigation.navigate("Plans");
-				navigation.navigate("DatePicker");
+				navigation.navigate("Choose the moment");
 			} else {
 				Alert.alert(
 					"Sign-In Failed",

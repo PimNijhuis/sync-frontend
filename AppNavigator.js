@@ -58,7 +58,7 @@ const AppNavigator = () => {
 					})}
 					component={BoardDetailScreen}
 				/>
-				<Stack.Screen name="DatePicker" component={DatePickerScreen} />
+				<Stack.Screen name="Choose the moment" component={DatePickerScreen} />
 				<Stack.Screen
 					name="Activities"
 					options={({ navigation }) => ({

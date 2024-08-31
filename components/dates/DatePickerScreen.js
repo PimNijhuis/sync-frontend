@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
-	Alert,
 	Dimensions,
+	ScrollView,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import CalendarEvents from "react-native-calendar-events";
 import { Agenda } from "react-native-calendars";
-import Icon from "react-native-vector-icons/Ionicons";
 
 const { width } = Dimensions.get("window");
 
@@ -19,100 +18,273 @@ const DatePickerScreen = () => {
 		new Date().toISOString().split("T")[0]
 	);
 	const [preferenceArray, setPreferenceArray] = useState([]);
+	const [calendars, setCalendars] = useState([]); // Save calendar objects here
+	const [refresh, setRefresh] = useState(false); // Save calendar objects here
+
+	// Function to move to the next day
+	const goToNextDay = () => {
+		const currentDate = new Date(selectedDate);
+		const nextDate = new Date(currentDate);
+		nextDate.setDate(currentDate.getDate() + 1); // Increment day by 1
+		const formattedDate = nextDate.toISOString().split("T")[0];
+		setSelectedDate(formattedDate);
+	};
 
 	useEffect(() => {
 		// Request permission to access the calendar
 		CalendarEvents.requestPermissions().then((result) => {
 			if (result === "authorized") {
-				loadEvents();
+				loadCalendars(); // Load calendars first
 			}
 		});
-	}, []);
+	}, [refresh]);
 
-	const loadEvents = () => {
-		const startDate = new Date();
-		const endDate = new Date();
-		endDate.setDate(endDate.getDate() + 30); // Load events for the next 30 days
+	const loadCalendars = useCallback(() => {
+		CalendarEvents.findCalendars()
+			.then((calendars) => {
+				// Add the includedForPreference flag to each calendar and sort by title
+				const calendarsWithPreference = calendars
+					.map((calendar) => ({
+						...calendar,
+						includedForPreference: true, // Set initial flag to true
+					}))
+					.sort((a, b) => a.title.localeCompare(b.title)); // Sort calendars by title
 
-		CalendarEvents.fetchAllEvents(
-			startDate.toISOString(),
-			endDate.toISOString()
-		)
-			.then((events) => {
-				const formattedEvents = formatEvents(events);
-				setEvents(formattedEvents);
+				setCalendars(calendarsWithPreference);
 			})
 			.catch((error) => {
-				console.log("Error fetching events:", error);
+				console.log("Error fetching calendars:", error);
 			});
-	};
+	}, []);
 
-	const handlePreference = (preference) => {
-		// Check if the date already exists in the preferenceArray
-		const dateExistsIndex = preferenceArray.findIndex(
-			(item) => item.date === selectedDate
-		);
-
-		if (dateExistsIndex !== -1) {
-			// Date exists, update the preference
-			const updatedArray = [...preferenceArray];
-			updatedArray[dateExistsIndex].preference = preference;
-			setPreferenceArray(updatedArray);
-		} else {
-			// Date does not exist, create a new record
-			setPreferenceArray([
-				...preferenceArray,
-				{
-					date: selectedDate,
-					preference: preference,
-				},
-			]);
-		}
-	};
-
-	const formatEvents = (events) => {
-		const formatted = {};
-		events.forEach((event) => {
-			const date = event.startDate.split("T")[0]; // Extract date part only
-			if (!formatted[date]) {
-				formatted[date] = [];
-			}
-			formatted[date].push({
-				name: event.title,
-				height: Math.max(50, Math.floor(Math.random() * 150)), // Random height for the item
-				time: `${new Date(event.startDate).toLocaleTimeString()} - ${new Date(
-					event.endDate
-				).toLocaleTimeString()}`,
-			});
-		});
-		return formatted;
-	};
 	useEffect(() => {
-		console.log(preferenceArray);
-	}, [preferenceArray]);
+		if (calendars.length > 0) {
+			loadEvents(calendars); // Load events only after calendars are fetched
+		}
+	}, [calendars]);
+
+	const loadEvents = useCallback(
+		(calendars) => {
+			const startDate = new Date();
+			const endDate = new Date();
+			endDate.setDate(endDate.getDate() + 30);
+
+			// Filter calendars based on includedForPreference flag
+			const filteredCalendars = calendars.filter(
+				(calendar) => calendar.includedForPreference
+			);
+
+			// Extract the IDs of the calendars to fetch events from
+			const calendarIds = filteredCalendars.map((calendar) => calendar.id);
+
+			CalendarEvents.fetchAllEvents(
+				startDate.toISOString(),
+				endDate.toISOString(),
+				calendarIds // Pass the filtered calendar IDs here
+			)
+				.then((events) => {
+					const formattedEvents = formatEvents(events);
+					setEvents(formattedEvents);
+				})
+				.catch((error) => {
+					console.log("Error fetching events:", error);
+				});
+		},
+		[calendars]
+	);
+
+	const toggleCalendarPreference = useCallback((calendarId) => {
+		setCalendars((prevCalendars) =>
+			prevCalendars.map((calendar) =>
+				calendar.id === calendarId
+					? {
+							...calendar,
+							includedForPreference: !calendar.includedForPreference,
+					  }
+					: calendar
+			)
+		);
+		setRefresh(!refresh);
+	}, []);
+
+	const handlePreference = useCallback(
+		(preference) => {
+			const dateExistsIndex = preferenceArray.findIndex(
+				(item) => item.date === selectedDate
+			);
+
+			if (dateExistsIndex !== -1) {
+				const updatedArray = [...preferenceArray];
+				updatedArray[dateExistsIndex].preference = preference;
+				setPreferenceArray(updatedArray);
+			} else {
+				setPreferenceArray([
+					...preferenceArray,
+					{
+						date: selectedDate,
+						preference: preference,
+					},
+				]);
+			}
+			goToNextDay();
+		},
+		[preferenceArray, selectedDate]
+	);
+
+	const renderItem = useCallback((item) => {
+		// console.log("Rendering item:", item.name);
+
+		if (!item) {
+			return (
+				<View style={[styles.item, { height: 50 }]}>
+					<Text style={styles.eventTitle}>Unknown Event</Text>
+					<Text style={styles.eventDate}>No Time Available</Text>
+				</View>
+			);
+		}
+
+		return (
+			<View style={[styles.item, { height: item.height || 50 }]}>
+				<Text style={styles.eventTitle}>{item.name || "Unnamed Event"}</Text>
+				<Text style={styles.eventDate}>{item.time || "No Time Available"}</Text>
+			</View>
+		);
+	}, []);
+
+	const formatEvents = useCallback(
+		(events) => {
+			// Filter out events that are not from the included calendars
+
+			const includedCalendars = calendars
+				.filter((calendar) => calendar.includedForPreference)
+				.map((calendar) => calendar.id);
+
+			const formatted = {};
+			events.forEach((event) => {
+				// Check if the event belongs to an included calendar
+				// console.log(
+				// 	"includedCalendars:",
+				// 	JSON.stringify(includedCalendars, null, 2)
+				// );
+				// console.log("event:", JSON.stringify(event, null, 2));
+				if (!includedCalendars.includes(event.calendar.id)) {
+					return;
+				}
+
+				const date = event.startDate.split("T")[0];
+				if (!formatted[date]) {
+					formatted[date] = [];
+				}
+
+				// Calculate the duration of the event in hours
+				const startTime = new Date(event.startDate);
+				const endTime = new Date(event.endDate);
+				const durationInHours = (endTime - startTime) / (1000 * 60 * 60); // Convert milliseconds to hours
+
+				// Set height proportional to the duration
+				const baseHeight = 50; // Minimum height for short events
+				const height = baseHeight + durationInHours * 5; // Adjust the multiplier as needed
+
+				formatted[date].push({
+					name: event.title,
+					height: height,
+					time: `${startTime.toLocaleTimeString([], {
+						hour: "2-digit",
+						minute: "2-digit",
+					})} - ${endTime.toLocaleTimeString([], {
+						hour: "2-digit",
+						minute: "2-digit",
+					})}`,
+				});
+			});
+			return formatted;
+		},
+		[calendars]
+	);
+
+	// Generate marked dates directly from preferenceArray
+	const getMarkedDates = () => {
+		const markedDates = {};
+
+		preferenceArray.forEach((item) => {
+			let color = "#00B0FF"; // Default blue
+			switch (item.preference) {
+				case "yes":
+					color = "#66BB6A"; // Green
+					break;
+				case "no":
+					color = "#EF5350"; // Red
+					break;
+				case "maybe":
+					color = "#FFA726"; // Orange
+					break;
+				default:
+					break;
+			}
+			markedDates[item.date] = {
+				selected: true,
+				selectedColor: color,
+			};
+		});
+
+		// Override the color to blue for the currently selected date
+		if (markedDates[selectedDate]) {
+			markedDates[selectedDate] = {
+				...markedDates[selectedDate],
+				selected: true,
+				selectedColor: "#00B0FF", // Temporarily set to blue
+			};
+		} else {
+			// If the selected date is not in the preference array, mark it as blue
+			markedDates[selectedDate] = {
+				selected: true,
+				selectedColor: "#00B0FF",
+			};
+		}
+
+		return markedDates;
+	};
+
+	// Filter the events to only include the selected date
+	const filteredEvents = { [selectedDate]: events[selectedDate] || [] };
 
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
 				<Text style={styles.headerTitle}>MOJOS</Text>
-				<TouchableOpacity>
-					<Icon name="add" size={24} color="#000" />
-				</TouchableOpacity>
 			</View>
+
+			{/* Calendar selection */}
+			<ScrollView
+				horizontal
+				style={styles.calendarButtonsContainer}
+				showsHorizontalScrollIndicator={false}
+			>
+				{calendars.map((calendar) => (
+					<TouchableOpacity
+						key={calendar.id}
+						style={[
+							styles.calendarButton,
+							{
+								backgroundColor: calendar.color,
+								opacity: calendar.includedForPreference ? 1 : 0.3,
+							},
+						]}
+						onPress={() => toggleCalendarPreference(calendar.id)}
+					>
+						<Text style={styles.calendarButtonText}>{calendar.title}</Text>
+					</TouchableOpacity>
+				))}
+			</ScrollView>
+
+			{/* Agenda view */}
 			<Agenda
-				items={events}
+				items={filteredEvents}
 				selected={selectedDate}
 				onDayPress={(day) => {
 					setSelectedDate(day.dateString);
 				}}
-				renderItem={(item, firstItemInDay) => {
-					return (
-						<View style={[styles.item, { height: item.height }]}>
-							<Text style={styles.eventTitle}>{item.name}</Text>
-							<Text style={styles.eventDate}>{item.time}</Text>
-						</View>
-					);
-				}}
+				renderItem={(item) => renderItem(item)}
 				renderEmptyDate={() => {
 					return (
 						<View style={styles.emptyDate}>
@@ -120,8 +292,8 @@ const DatePickerScreen = () => {
 						</View>
 					);
 				}}
+				markedDates={getMarkedDates()} // Apply the marked dates directly from the preference array
 				theme={{
-					selectedDayBackgroundColor: "#00B0FF",
 					todayTextColor: "#00B0FF",
 					agendaDayTextColor: "black",
 					agendaDayNumColor: "black",
@@ -134,27 +306,15 @@ const DatePickerScreen = () => {
 				<TouchableOpacity
 					style={[styles.button, styles.orangeButton]}
 					onPress={() => handlePreference("maybe")}
-				>
-					<Icon name="help-circle-outline" size={30} color="#fff" />
-				</TouchableOpacity>
+				/>
 				<TouchableOpacity
 					style={[styles.button, styles.redButton]}
 					onPress={() => handlePreference("no")}
-				>
-					<Icon name="close-circle-outline" size={30} color="#fff" />
-				</TouchableOpacity>
+				/>
 				<TouchableOpacity
 					style={[styles.button, styles.greenButton]}
 					onPress={() => handlePreference("yes")}
-				>
-					<Icon name="checkmark-circle-outline" size={30} color="#fff" />
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={[styles.button, styles.blueButton]}
-					onPress={() => Alert.alert("Coming soon!")}
-				>
-					<Icon name="create-outline" size={30} color="#fff" />
-				</TouchableOpacity>
+				/>
 			</View>
 		</View>
 	);
@@ -176,6 +336,25 @@ const styles = StyleSheet.create({
 	headerTitle: {
 		fontSize: 20,
 		fontWeight: "bold",
+	},
+	calendarButtonsContainer: {
+		paddingLeft: 10,
+		height: 35, // Explicitly set height for the container
+		backgroundColor: "#fff",
+		maxHeight: 35,
+	},
+	calendarButton: {
+		height: 30, // Set explicit height for each button
+		paddingHorizontal: 8,
+		justifyContent: "center", // Ensure the text is centered vertically
+		borderRadius: 5,
+		marginRight: 10,
+		maxHeight: 35,
+	},
+	calendarButtonText: {
+		color: "#fff",
+		fontWeight: "bold",
+		fontSize: 12, // Smaller font size for better fit
 	},
 	item: {
 		backgroundColor: "white",
@@ -213,8 +392,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 	},
 	button: {
-		width: width / 5,
-		height: width / 5,
+		width: width / 6,
+		height: width / 6,
 		borderRadius: width / 10,
 		justifyContent: "center",
 		alignItems: "center",
