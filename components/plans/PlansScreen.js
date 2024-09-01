@@ -10,7 +10,7 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome"; // Make sure this is the correct icon set you're using
 import { getPlansAPI } from "../../services/plans/actions";
 
-// Define a list of calm colors
+// Define a list of calm colors.
 const calmColors = [
 	"#A8D5BA", // Light green
 	"#FFD3B4", // Light peach
