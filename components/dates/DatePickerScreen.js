@@ -71,7 +71,7 @@ const DatePickerScreen = () => {
 			const endDate = new Date();
 			endDate.setDate(endDate.getDate() + 30);
 
-			// Filter calendars based on includedForPreference flag
+			// Filter calendars based on includedForPreference flag.
 			const filteredCalendars = calendars.filter(
 				(calendar) => calendar.includedForPreference
 			);
