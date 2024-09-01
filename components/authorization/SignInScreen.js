@@ -16,7 +16,7 @@ const SignInScreen = ({ navigation }) => {
 
 	const handleSignIn = async () => {
 		try {
-			const res = await signInAPI("Pim", "pim");
+			const res = await signInAPI(username, password);
 			if (res) {
 				navigation.navigate("Plans");
 			} else {

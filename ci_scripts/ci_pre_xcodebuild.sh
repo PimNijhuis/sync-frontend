@@ -1,7 +1,9 @@
-#!/bin/bash
+ #!/bin/zsh
 
-echo "Running pre-Xcode build script..."
+ echo "🧩 Stage: PRE-Xcode Build is activated .... "
 
-# Navigate to the iOS directory and run pod install
-cd "$CI_WORKSPACE/ios"
-pod install
+ # You can add additional scripts here...
+
+ echo "🎯 Stage: PRE-Xcode Build is DONE .... "
+
+ exit 0
