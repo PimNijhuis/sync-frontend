@@ -1,13 +1,14 @@
 {
   "images" : [
     {
+      "filename" : "Screenshot 2024-09-01 at 15.39.1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "expo"
+    "author" : "xcode",
+    "version" : 1
   }
 }
