@@ -67,5 +67,7 @@
 	<string>Octicons.ttf</string>
 	<string>Zocial.ttf</string>
 	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>  
+	<false/>
 </dict>
 </plist>
