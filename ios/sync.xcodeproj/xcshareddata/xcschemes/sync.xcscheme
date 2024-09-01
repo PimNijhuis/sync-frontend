@@ -6,6 +6,25 @@
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES"
       buildArchitectures = "Automatic">
+      <PreActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "#!/bin/bash&#10;&#10;# Ensure CocoaPods is installed&#10;if ! which pod &gt; /dev/null; then&#10;   echo &quot;CocoaPods is not installed. Installing CocoaPods...&quot;&#10;   sudo gem install cocoapods&#10;else&#10;   echo &quot;CocoaPods is installed. Running pod install...&quot;&#10;fi&#10;&#10;# Navigate to the iOS directory and run pod install&#10;cd &quot;$CI_WORKSPACE/ios&quot;&#10;pod install&#10;"
+               shellToInvoke = "/bin/bash">
+               <EnvironmentBuildable>
+                  <BuildableReference
+                     BuildableIdentifier = "primary"
+                     BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
+                     BuildableName = "sync.app"
+                     BlueprintName = "sync"
+                     ReferencedContainer = "container:sync.xcodeproj">
+                  </BuildableReference>
+               </EnvironmentBuildable>
+            </ActionContent>
+         </ExecutionAction>
+      </PreActions>
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -74,5 +93,24 @@
    <ArchiveAction
       buildConfiguration = "Release"
       revealArchiveInOrganizer = "YES">
+      <PreActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "#!/bin/bash&#10;&#10;# Ensure CocoaPods is installed&#10;if ! which pod &gt; /dev/null; then&#10;   echo &quot;CocoaPods is not installed. Installing CocoaPods...&quot;&#10;   sudo gem install cocoapods&#10;else&#10;   echo &quot;CocoaPods is installed. Running pod install...&quot;&#10;fi&#10;&#10;# Navigate to the iOS directory and run pod install&#10;cd &quot;$CI_WORKSPACE/ios&quot;&#10;pod install&#10;"
+               shellToInvoke = "/bin/bash">
+               <EnvironmentBuildable>
+                  <BuildableReference
+                     BuildableIdentifier = "primary"
+                     BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
+                     BuildableName = "sync.app"
+                     BlueprintName = "sync"
+                     ReferencedContainer = "container:sync.xcodeproj">
+                  </BuildableReference>
+               </EnvironmentBuildable>
+            </ActionContent>
+         </ExecutionAction>
+      </PreActions>
    </ArchiveAction>
 </Scheme>
