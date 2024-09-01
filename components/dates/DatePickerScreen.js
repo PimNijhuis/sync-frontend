@@ -179,7 +179,7 @@ const DatePickerScreen = () => {
 				const durationInHours = (endTime - startTime) / (1000 * 60 * 60); // Convert milliseconds to hours
 
 				// Set height proportional to the duration
-				const baseHeight = 50; // Minimum height for short events
+				const baseHeight = 70; // Minimum height for short events
 				const height = baseHeight + durationInHours * 5; // Adjust the multiplier as needed
 
 				formatted[date].push({
@@ -309,6 +309,7 @@ const DatePickerScreen = () => {
 						setShowPreferenceButtons(true);
 					}
 				}}
+				firstDay={1}
 			/>
 
 			{/* Preference Buttons */}
