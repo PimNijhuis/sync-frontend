@@ -5,7 +5,7 @@ import { Image, TouchableOpacity } from "react-native";
 import HolidayDestinationScreen from "./components/activities/HolidayDestinationScreen";
 import SignInScreen from "./components/authorization/SignInScreen";
 import DatePickerScreen from "./components/dates/DatePickerScreen";
-import BoardDetailScreen from "./components/plans/PlansDetailScreen";
+import PlanDetailScreen from "./components/plans/PlansDetailScreen";
 import PlansScreen from "./components/plans/PlansScreen";
 
 const Stack = createStackNavigator();
@@ -40,7 +40,7 @@ const AppNavigator = () => {
 					component={PlansScreen}
 				/>
 				<Stack.Screen
-					name="BoardDetail"
+					name="Checkpoints"
 					options={({ route }) => ({
 						title: route.params.boardName,
 						headerRight: () => (
@@ -56,7 +56,7 @@ const AppNavigator = () => {
 							</TouchableOpacity>
 						),
 					})}
-					component={BoardDetailScreen}
+					component={PlanDetailScreen}
 				/>
 				<Stack.Screen name="Choose the moment" component={DatePickerScreen} />
 				<Stack.Screen

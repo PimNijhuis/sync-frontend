@@ -1,10 +1,10 @@
 import backend from "../config.js";
 
-export const getBoardMembersAPI = async (boardId) => {
+export const getPlansAPI = async () => {
 	return backend
-		.get(`/boards/${boardId}`)
+		.get(`/plans`)
 		.then((response) => {
-			return response.data?.board;
+			return response?.data;
 		})
 		.catch((err) => {
 			console.log(err);

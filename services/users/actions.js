@@ -1,4 +1,3 @@
-import axios from "axios";
 import backend from "../config.js";
 
 export const signInAPI = async (username, password) => {
@@ -12,8 +11,8 @@ export const signInAPI = async (username, password) => {
 		.then((res) => {
 			let authorization_token =
 				res.data.token_type + " " + res.data.access_token;
-			// TODO set authorization_token in redux store
-			axios.defaults.headers.common["Authorization"] = authorization_token;
+			// TODO set authorization_token in redux store?
+			backend.defaults.headers.common["Authorization"] = authorization_token;
 			return res.data;
 		})
 		.catch((err) => {

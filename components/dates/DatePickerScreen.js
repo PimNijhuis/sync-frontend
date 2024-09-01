@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import CalendarEvents from "react-native-calendar-events";
 import { Agenda } from "react-native-calendars";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 const { width } = Dimensions.get("window");
 
@@ -18,8 +19,9 @@ const DatePickerScreen = () => {
 		new Date().toISOString().split("T")[0]
 	);
 	const [preferenceArray, setPreferenceArray] = useState([]);
-	const [calendars, setCalendars] = useState([]); // Save calendar objects here
-	const [refresh, setRefresh] = useState(false); // Save calendar objects here
+	const [calendars, setCalendars] = useState([]);
+	const [refresh, setRefresh] = useState(false);
+	const [showPreferenceButtons, setShowPreferenceButtons] = useState(true);
 
 	// Function to move to the next day
 	const goToNextDay = () => {
@@ -162,11 +164,6 @@ const DatePickerScreen = () => {
 			const formatted = {};
 			events.forEach((event) => {
 				// Check if the event belongs to an included calendar
-				// console.log(
-				// 	"includedCalendars:",
-				// 	JSON.stringify(includedCalendars, null, 2)
-				// );
-				// console.log("event:", JSON.stringify(event, null, 2));
 				if (!includedCalendars.includes(event.calendar.id)) {
 					return;
 				}
@@ -251,7 +248,10 @@ const DatePickerScreen = () => {
 	return (
 		<View style={styles.container}>
 			<View style={styles.header}>
-				<Text style={styles.headerTitle}>MOJOS</Text>
+				<View>
+					<Text style={styles.headerTitle}>MOJOS</Text>
+					<Text style={styles.subHeaderTitle}>Dinner | 17:00 - 21:00</Text>
+				</View>
 			</View>
 
 			{/* Calendar selection */}
@@ -266,7 +266,9 @@ const DatePickerScreen = () => {
 						style={[
 							styles.calendarButton,
 							{
-								backgroundColor: calendar.color,
+								backgroundColor: calendar.includedForPreference
+									? calendar.color
+									: "grey",
 								opacity: calendar.includedForPreference ? 1 : 0.3,
 							},
 						]}
@@ -298,24 +300,40 @@ const DatePickerScreen = () => {
 					agendaDayTextColor: "black",
 					agendaDayNumColor: "black",
 					agendaTodayColor: "#00B0FF",
-					agendaKnobColor: "#00B0FF",
+					agendaKnobColor: "grey",
+				}}
+				onCalendarToggled={(calendarOpened) => {
+					if (calendarOpened) {
+						setShowPreferenceButtons(false);
+					} else {
+						setShowPreferenceButtons(true);
+					}
 				}}
 			/>
 
-			<View style={styles.buttonContainer}>
-				<TouchableOpacity
-					style={[styles.button, styles.orangeButton]}
-					onPress={() => handlePreference("maybe")}
-				/>
-				<TouchableOpacity
-					style={[styles.button, styles.redButton]}
-					onPress={() => handlePreference("no")}
-				/>
-				<TouchableOpacity
-					style={[styles.button, styles.greenButton]}
-					onPress={() => handlePreference("yes")}
-				/>
-			</View>
+			{/* Preference Buttons */}
+			{showPreferenceButtons && (
+				<View style={styles.buttonContainer}>
+					<TouchableOpacity
+						style={[styles.button, styles.orangeButton]}
+						onPress={() => handlePreference("maybe")}
+					>
+						<FontAwesome name="question-circle" size={30} color="#fff" />
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={[styles.button, styles.redButton]}
+						onPress={() => handlePreference("no")}
+					>
+						<FontAwesome name="times-circle" size={30} color="#fff" />
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={[styles.button, styles.greenButton]}
+						onPress={() => handlePreference("yes")}
+					>
+						<FontAwesome name="check-circle" size={30} color="#fff" />
+					</TouchableOpacity>
+				</View>
+			)}
 		</View>
 	);
 };
@@ -336,6 +354,11 @@ const styles = StyleSheet.create({
 	headerTitle: {
 		fontSize: 20,
 		fontWeight: "bold",
+	},
+	subHeaderTitle: {
+		fontSize: 14, // Smaller font size for the dinner text
+		color: "gray", // Gray color for the dinner text
+		marginTop: 4, // Small margin to separate the dinner text from the title
 	},
 	calendarButtonsContainer: {
 		paddingLeft: 10,

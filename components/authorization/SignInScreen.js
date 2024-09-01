@@ -16,10 +16,9 @@ const SignInScreen = ({ navigation }) => {
 
 	const handleSignIn = async () => {
 		try {
-			const res = await signInAPI(username, password);
+			const res = await signInAPI("Pim", "pim");
 			if (res) {
-				// navigation.navigate("Plans");
-				navigation.navigate("Choose the moment");
+				navigation.navigate("Plans");
 			} else {
 				Alert.alert(
 					"Sign-In Failed",
