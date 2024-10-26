@@ -161,32 +161,82 @@ function CalendarScreen() {
 
 	const handleEventDrop = (dropInfo) => {
 		const { event, start, end } = dropInfo;
+
 		if (event.type === "availability") {
+			// Define new start and end times for the dropped event
+			const newStart = start;
+			const newEnd = end;
+
+			// Check if the event has been moved to a different day with the same time slot
 			const originalStartDate = new Date(event.start).setHours(0, 0, 0, 0);
-			const newStartDate = new Date(start).setHours(0, 0, 0, 0);
+			const newStartDate = new Date(newStart).setHours(0, 0, 0, 0);
 
 			const isSameTimeSlot =
-				event.start.getHours() === start.getHours() &&
-				event.start.getMinutes() === start.getMinutes() &&
-				event.end.getHours() === end.getHours() &&
-				event.end.getMinutes() === end.getMinutes();
+				event.start.getHours() === newStart.getHours() &&
+				event.start.getMinutes() === newStart.getMinutes() &&
+				event.end.getHours() === newEnd.getHours() &&
+				event.end.getMinutes() === newEnd.getMinutes();
 
-			let updatedAvailability;
+			// If moved to a new day but with the same time slot, duplicate the event
 			if (originalStartDate !== newStartDate && isSameTimeSlot) {
 				const newEvent = {
 					...event,
-					id: Date.now(),
-					start,
-					end,
+					id: Date.now(), // Assign a new ID for the duplicated event
+					start: newStart,
+					end: newEnd,
 				};
-				updatedAvailability = [...availability, newEvent];
-			} else {
-				updatedAvailability = availability.map((evt) =>
-					evt.id === event.id ? { ...evt, start, end } : evt
-				);
+				setAvailablity([...availability, newEvent]);
+				return;
 			}
 
-			setAvailablity(updatedAvailability);
+			// Otherwise, continue with merging logic if slots are connected
+			const connectedSlots = availability.filter((evt) => {
+				if (evt.type === "availability" && evt.id !== event.id) {
+					return (
+						(newStart <= evt.end && newStart >= evt.start) || // New start is within an existing slot
+						(newEnd >= evt.start && newEnd <= evt.end) || // New end is within an existing slot
+						(evt.start <= newEnd && evt.end >= newStart) || // Existing slot is within new slot
+						newStart === evt.end ||
+						newEnd === evt.start // New slot is exactly adjacent
+					);
+				}
+				return false;
+			});
+
+			// Merge logic if there are connected slots
+			if (connectedSlots.length > 0) {
+				const mergedStart = new Date(
+					Math.min(
+						newStart.getTime(),
+						...connectedSlots.map((evt) => evt.start.getTime())
+					)
+				);
+				const mergedEnd = new Date(
+					Math.max(
+						newEnd.getTime(),
+						...connectedSlots.map((evt) => evt.end.getTime())
+					)
+				);
+
+				// Remove the connected slots and the current event, then add the merged slot
+				const remainingAvailability = availability.filter(
+					(evt) => evt.id !== event.id && !connectedSlots.includes(evt)
+				);
+				const mergedSlot = {
+					id: Date.now(),
+					title: "Available",
+					start: mergedStart,
+					end: mergedEnd,
+					type: "availability",
+				};
+				setAvailablity([...remainingAvailability, mergedSlot]);
+			} else {
+				// No connected slots found, so update only the dropped event
+				const updatedAvailability = availability.map((evt) =>
+					evt.id === event.id ? { ...evt, start: newStart, end: newEnd } : evt
+				);
+				setAvailablity(updatedAvailability);
+			}
 		}
 	};
 
