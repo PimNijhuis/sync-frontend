@@ -13,6 +13,7 @@ function CalendarScreen() {
 	const [availability, setAvailablity] = useState(
 		availabilityByUser[user] || []
 	);
+	const [overlap, setOverlap] = useState(overlapByUser[user] || []);
 	const [viewMode, setViewMode] = useState("onlyMe"); // New state for toggle
 	const username = users?.find((u) => u.id === user)?.name;
 	const [editingEventId, setEditingEventId] = useState(null);
@@ -24,10 +25,11 @@ function CalendarScreen() {
 		if (selectedUser) {
 			setEvents(eventsByUser[selectedUser]);
 			setAvailablity(availabilityByUser[selectedUser]);
+			setOverlap(overlapByUser[selectedUser]);
 		} else {
 			navigate("/");
 		}
-	}, [selectedUser, viewMode, navigate]); // Added `navigate` to the dependency array
+	}, [selectedUser, viewMode]);
 
 	// Toggle view mode between "Only me" and "Me and others"
 	const toggleViewMode = () => {
@@ -199,9 +201,10 @@ function CalendarScreen() {
 		viewMode === "onlyMe"
 			? [...events, ...availability]
 			: [
-					...(overlapByUser[user] || []),
-					...(eventsByUser[user] || []),
-					...(availabilityByUser[user] || []),
+					// Only overlap for the current user
+					...(events || []),
+					...(availability || []),
+					...(overlap || []),
 			  ];
 
 	return (
