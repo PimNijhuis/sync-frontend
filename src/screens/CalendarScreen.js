@@ -1,105 +1,259 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CalendarComponent from "../components/Calendar/CalendarComponent";
-import { eventsByUser } from "../data/eventsFromNativeCalendar";
+import { availabilityByUser } from "../data/availabilityByUser";
+import { eventsByUser } from "../data/eventsByUser";
+import { overlapByUser } from "../data/overlapByUser";
 import { users } from "../data/users";
 import { useAuth } from "../hooks/AuthContext";
 
 function CalendarScreen() {
-	const { user, logout } = useAuth();
+	const { user, login } = useAuth();
 	const [events, setEvents] = useState(eventsByUser[user] || []);
+	const [availability, setAvailablity] = useState(
+		availabilityByUser[user] || []
+	);
+	const [overlap, setOverlap] = useState(overlapByUser[user] || []);
+	const [viewMode, setViewMode] = useState("onlyMe"); // New state for toggle
+	const username = users?.find((u) => u.id === user)?.name;
+	const [editingEventId, setEditingEventId] = useState(null);
+	const [selectedUser, setSelectedUser] = useState(user);
 	const navigate = useNavigate();
-	const username = users.find((u) => u.id === user).name;
-	const [editingEventId, setEditingEventId] = useState(null); // Track the edited event
 
-	const handleLogout = () => {
-		logout();
-		navigate("/");
+	// Update events based on user or viewMode changes
+	useEffect(() => {
+		if (selectedUser) {
+			setEvents(eventsByUser[selectedUser]);
+			setAvailablity(availabilityByUser[selectedUser]);
+			setOverlap(overlapByUser[selectedUser]);
+		} else {
+			navigate("/");
+		}
+	}, [selectedUser, viewMode]);
+
+	// Toggle view mode between "Only me" and "Me and others"
+	const toggleViewMode = () => {
+		setViewMode((prevMode) =>
+			prevMode === "onlyMe" ? "meAndOthers" : "onlyMe"
+		);
+	};
+
+	const handleUserSwitch = (e) => {
+		const newUserId = Number(e.target.value);
+		setSelectedUser(newUserId);
+		login(newUserId);
 	};
 
 	const handleSelectSlot = (slotInfo) => {
-		const newEvent = {
-			id: Date.now(),
-			title: "New Event",
-			start: slotInfo.start,
-			end: new Date(slotInfo.start.getTime() + 60 * 90 * 1000), // Set end time 1 hour after start
-		};
-		setEvents([...events, newEvent]);
-		setEditingEventId(newEvent.id); // Set new event as the one being edited
-	};
-
-	const handleSelectEvent = (selectedEvent) => {
-		console.log("Event selected:", selectedEvent);
-	};
-	const handleTitleChange = (eventId, newTitle) => {
-		setEvents((prevEvents) =>
-			prevEvents.map((event) =>
-				event.id === eventId ? { ...event, title: newTitle } : event
+		const newStart = slotInfo.start;
+		const newEnd = new Date(
+			Math.max(
+				new Date(slotInfo.start.getTime() + 60 * 120 * 1000),
+				slotInfo.end.getTime()
 			)
 		);
+
+		// Find all slots that are adjacent to or overlap with the new slot
+		const connectedSlots = availability.filter((evt) => {
+			if (evt.type === "availability") {
+				return (
+					(newStart <= evt.end && newStart >= evt.start) || // New start is within existing slot
+					(newEnd >= evt.start && newEnd <= evt.end) || // New end is within existing slot
+					(evt.start <= newEnd && evt.end >= newStart) || // Existing slot is within new slot
+					newStart === evt.end ||
+					newEnd === evt.start // New slot is exactly adjacent
+				);
+			}
+			return false;
+		});
+
+		// If there are connected slots, merge them
+		if (connectedSlots.length > 0) {
+			// Calculate the merged start and end times
+			const mergedStart = new Date(
+				Math.min(
+					newStart.getTime(),
+					...connectedSlots.map((evt) => evt.start.getTime())
+				)
+			);
+			const mergedEnd = new Date(
+				Math.max(
+					newEnd.getTime(),
+					...connectedSlots.map((evt) => evt.end.getTime())
+				)
+			);
+
+			// Remove the connected slots from availability and add the merged slot
+			const remainingAvailability = availability.filter(
+				(evt) => !connectedSlots.includes(evt)
+			);
+			const mergedSlot = {
+				id: Date.now(),
+				title: "Available",
+				start: mergedStart,
+				end: mergedEnd,
+				type: "availability",
+			};
+			setAvailablity([...remainingAvailability, mergedSlot]);
+		} else {
+			// No connected slots found, so add the new slot as a separate entry
+			const newAvailability = {
+				id: Date.now(),
+				title: "Available",
+				start: newStart,
+				end: newEnd,
+				type: "availability",
+			};
+			setAvailablity([...availability, newAvailability]);
+		}
+
+		setEditingEventId(null); // Reset editing event if needed
 	};
 
-	const handleEventResize = (resizeInfo) => {
+	const handleAvailabilityResize = (resizeInfo) => {
 		const { event, start, end } = resizeInfo;
-		console.log("Event resized:", { event, start, end });
-		const updatedEvents = events.map((evt) =>
-			evt.id === event.id ? { ...evt, start, end } : evt
-		);
-		setEvents(updatedEvents);
+
+		if (event.type === "availability") {
+			// Find all slots that are adjacent to or overlap with the resized slot
+			const connectedSlots = availability.filter((evt) => {
+				if (evt.type === "availability" && evt.id !== event.id) {
+					return (
+						(start <= evt.end && start >= evt.start) || // Resized start is within an existing slot
+						(end >= evt.start && end <= evt.end) || // Resized end is within an existing slot
+						(evt.start <= end && evt.end >= start) || // Existing slot is within resized slot
+						start === evt.end ||
+						end === evt.start // Resized slot is exactly adjacent
+					);
+				}
+				return false;
+			});
+
+			// Calculate the merged start and end times
+			const mergedStart = new Date(
+				Math.min(
+					start.getTime(),
+					...connectedSlots.map((evt) => evt.start.getTime())
+				)
+			);
+			const mergedEnd = new Date(
+				Math.max(
+					end.getTime(),
+					...connectedSlots.map((evt) => evt.end.getTime())
+				)
+			);
+
+			// Remove the connected slots from availability and add the merged slot
+			const remainingAvailability = availability.filter(
+				(evt) => evt.id !== event.id && !connectedSlots.includes(evt)
+			);
+			const mergedSlot = {
+				id: Date.now(),
+				title: "Available",
+				start: mergedStart,
+				end: mergedEnd,
+				type: "availability",
+			};
+
+			// Update availability with the merged slot
+			setAvailablity([...remainingAvailability, mergedSlot]);
+		}
 	};
 
 	const handleEventDrop = (dropInfo) => {
 		const { event, start, end } = dropInfo;
+		if (event.type === "availability") {
+			const originalStartDate = new Date(event.start).setHours(0, 0, 0, 0);
+			const newStartDate = new Date(start).setHours(0, 0, 0, 0);
 
-		// Check if the event has been moved to a different day
-		const originalStartDate = new Date(event.start).setHours(0, 0, 0, 0);
-		const newStartDate = new Date(start).setHours(0, 0, 0, 0);
+			const isSameTimeSlot =
+				event.start.getHours() === start.getHours() &&
+				event.start.getMinutes() === start.getMinutes() &&
+				event.end.getHours() === end.getHours() &&
+				event.end.getMinutes() === end.getMinutes();
 
-		// Check if the time slot is the same
-		const isSameTimeSlot =
-			event.start.getHours() === start.getHours() &&
-			event.start.getMinutes() === start.getMinutes() &&
-			event.end.getHours() === end.getHours() &&
-			event.end.getMinutes() === end.getMinutes();
+			let updatedAvailability;
+			if (originalStartDate !== newStartDate && isSameTimeSlot) {
+				const newEvent = {
+					...event,
+					id: Date.now(),
+					start,
+					end,
+				};
+				updatedAvailability = [...availability, newEvent];
+			} else {
+				updatedAvailability = availability.map((evt) =>
+					evt.id === event.id ? { ...evt, start, end } : evt
+				);
+			}
 
-		let updatedEvents;
-		if (originalStartDate !== newStartDate && isSameTimeSlot) {
-			// Duplicate the event if moved to a different day but the same time slot
-			const newEvent = {
-				...event,
-				id: Date.now(), // New ID for the duplicated event
-				start,
-				end,
-			};
-			updatedEvents = [...events, newEvent];
-		} else {
-			// If the time slot changes or it's the same day, update the event
-			updatedEvents = events.map((evt) =>
-				evt.id === event.id ? { ...evt, start, end } : evt
-			);
+			setAvailablity(updatedAvailability);
 		}
-
-		console.log("Event dropped:", { event, start, end });
-		setEvents(updatedEvents);
 	};
 
 	const handleDeleteEvent = (eventToDelete) => {
-		setEvents(events.filter((event) => event.id !== eventToDelete.id));
-		console.log("Event deleted:", eventToDelete);
+		setAvailablity(
+			availability.filter((event) => event.id !== eventToDelete.id)
+		);
 	};
+
+	// Create the combined blocks based on view mode
+	let calendarBlocks =
+		viewMode === "onlyMe"
+			? [...events, ...availability]
+			: [
+					// Only overlap for the current user
+					...(overlapByUser[user] || []),
+					...(eventsByUser[user] || []),
+					...(availabilityByUser[user] || []),
+			  ];
 
 	return (
 		<div>
-			<h2>Welcome, {username}!</h2>
-			<button onClick={handleLogout}>Logout</button>
+			<div
+				style={{
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				<h2>Hi, {username}!</h2>
+				<select
+					value=""
+					onChange={handleUserSwitch}
+					style={{ marginLeft: "10px", padding: "5px" }}
+				>
+					<option value="" disabled>
+						Switch to
+					</option>
+					{users
+						.filter((user) => user.id !== selectedUser)
+						.map((user) => (
+							<option key={user.id} value={user.id}>
+								{user.name}
+							</option>
+						))}
+				</select>
+				<button
+					onClick={toggleViewMode}
+					style={{
+						marginLeft: "10px",
+						padding: "5px 10px",
+						backgroundColor: "#007bff",
+						color: "white",
+						border: "none",
+						borderRadius: "4px",
+						cursor: "pointer",
+					}}
+				>
+					{viewMode === "onlyMe" ? "Only me" : "Me and others"}
+				</button>
+			</div>
 			<CalendarComponent
-				events={events}
+				events={calendarBlocks}
 				onSelectSlot={handleSelectSlot}
-				onSelectEvent={handleSelectEvent}
-				onEventResize={handleEventResize}
+				onEventResize={handleAvailabilityResize}
 				onEventDrop={handleEventDrop}
 				onEventDelete={handleDeleteEvent}
-				onTitleChange={handleTitleChange}
 				editingEventId={editingEventId}
 			/>
 		</div>

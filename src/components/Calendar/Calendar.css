@@ -1,55 +1,31 @@
-.calendar-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-}
-
-.calendar-title {
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.calendar-wrapper {
-  width: 90%;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.logout-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  border: none;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.logout-button:hover {
-  background-color: #0056b3;
-}
-
-.logout-button:active {
-  background-color: #004494;
-}
-
 .event-container {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 8px;
+  flex-direction: column; /* Stack title and icon vertically */
+  align-items: flex-start; /* Align title to the left */
+  padding: 5px;
   border-radius: 4px;
+}
+
+.event-title-container {
+  width: 100%;
 }
 
 .event-title {
   font-size: 14px;
-  color: #FFFFFF; /* Adjust this color to match your event text color */
+  font-weight: 900;
+  color: #FFFFFF;
 }
 
+.icon-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end; /* Center icon horizontally */
+  align-items: flex-end; /* Center icon vertically */
+  width: 100%; /* Take full width to center align */
+}
 
-
+.rbc-day-slot .rbc-event-label {
+  text-align: center;
+  font-size: 10px;
+  margin-top: 3px
+}
