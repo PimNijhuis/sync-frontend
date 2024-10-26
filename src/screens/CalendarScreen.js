@@ -29,7 +29,7 @@ function CalendarScreen() {
 		} else {
 			navigate("/");
 		}
-	}, [selectedUser, viewMode]);
+	}, [selectedUser, viewMode, navigate]);
 
 	// Toggle view mode between "Only me" and "Me and others"
 	const toggleViewMode = () => {
