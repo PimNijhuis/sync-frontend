@@ -3,7 +3,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: #f9f9f9;
   padding: 10px;
 }
 
@@ -38,3 +37,19 @@
 .logout-button:active {
   background-color: #004494;
 }
+
+.event-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.event-title {
+  font-size: 14px;
+  color: #FFFFFF; /* Adjust this color to match your event text color */
+}
+
+
+
