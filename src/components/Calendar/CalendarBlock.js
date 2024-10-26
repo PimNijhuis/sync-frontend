@@ -1,6 +1,6 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { IconButton, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./Calendar.css";
 
 const CalendarBlock = ({ event, onDelete, editingEventId }) => {
@@ -18,18 +18,22 @@ const CalendarBlock = ({ event, onDelete, editingEventId }) => {
 		}
 	};
 
-	const handleClickOutside = (e) => {
-		if (isEditing && !e.target.closest(".event-container")) {
-			setIsEditing(false);
-		}
-	};
+	// Memoize handleClickOutside using useCallback
+	const handleClickOutside = useCallback(
+		(e) => {
+			if (isEditing && !e.target.closest(".event-container")) {
+				setIsEditing(false);
+			}
+		},
+		[isEditing]
+	);
 
 	useEffect(() => {
 		document.addEventListener("mousedown", handleClickOutside);
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [isEditing]);
+	}, [handleClickOutside]); // Add handleClickOutside to the dependency array
 
 	return (
 		<div
